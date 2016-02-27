@@ -2,6 +2,7 @@ from slacker import Slacker
 
 from optparse import OptionParser
 from sets import Set
+from collections import defaultdict
 import json
 
 parser = OptionParser()
@@ -24,15 +25,16 @@ for channel in response.body["channels"]:
 # print channel_members
 
 names_with_any_overlap = Set()
-overlaps = dict()
+overlaps = defaultdict(list)
 for (outer_name, outer_members) in channel_members.items():
     for (inner_name, inner_members) in channel_members.items():
         if outer_name < inner_name:
             overlap = outer_members & inner_members
-            if len(overlap) > 1:
+            overlap_size = len(overlap)
+            if overlap_size > 1:
                 names_with_any_overlap.add(outer_name)
                 names_with_any_overlap.add(inner_name)
-                overlaps[(outer_name, inner_name)] = overlap
+                overlaps[overlap_size].append("%s,%s" % (outer_name,inner_name))
 
 # print names_with_any_overlap
 # print overlaps
@@ -40,5 +42,5 @@ for (outer_name, outer_members) in channel_members.items():
 with open(options.outfile, 'w') as outfile:
     summary = {
         'names': list(names_with_any_overlap),
-        'overlaps': [("%s,%s" % channel_pair, len(members)) for (channel_pair, members) in overlaps.iteritems()]}
+        'overlaps': overlaps}
     json.dump(summary,outfile, sort_keys=True, indent=4, separators=(',', ': '))
