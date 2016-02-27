@@ -41,4 +41,4 @@ with open(options.outfile, 'w') as outfile:
     summary = {
         'names': list(names_with_any_overlap),
         'overlaps': [("%s,%s" % channel_pair, len(members)) for (channel_pair, members) in overlaps.iteritems()]}
-    json.dump(summary,outfile)
+    json.dump(summary,outfile, sort_keys=True, indent=4, separators=(',', ': '))
