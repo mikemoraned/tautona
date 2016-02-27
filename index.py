@@ -11,8 +11,13 @@ slack = Slacker(options.token)
 
 response = slack.channels.list()
 
-for channel in response.body["channels"]:
-    print channel["name"]
+channel_users = dict()
 
+for channel in response.body["channels"]:
+    name = channel["name"]
+    print name
+    channel_users[name] = channel["members"]
+
+print channel_users
 
 
