@@ -28,12 +28,14 @@ for channel in response.body["channels"]:
 min_overlap = int(options.min_overlap)
 names_with_any_overlap = Set()
 overlaps = defaultdict(list)
+max_overlap = 0
 for (outer_name, outer_members) in channel_members.items():
     for (inner_name, inner_members) in channel_members.items():
         if outer_name < inner_name:
             overlap = outer_members & inner_members
             overlap_size = len(overlap)
             if overlap_size >= min_overlap:
+                max_overlap = max(max_overlap, overlap_size)
                 names_with_any_overlap.add(outer_name)
                 names_with_any_overlap.add(inner_name)
                 overlaps[overlap_size].append((outer_name,inner_name))
@@ -50,13 +52,14 @@ with open(options.outfile, 'w') as outfile:
         nodes.append(node)
 
     links = list()
-    for (size, pairs) in overlaps.iteritems():
+    for (overlap, pairs) in overlaps.iteritems():
         for pair in pairs:
             (source, target) = pair
+            value = int(20 * (float(max_overlap - overlap) / float(max_overlap)))
             links.append({
                 'source': node_number[source],
                 'target': node_number[target],
-                'value': size
+                'value': value
             })
 
     summary = {
