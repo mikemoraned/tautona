@@ -7,6 +7,7 @@ import json
 
 parser = OptionParser()
 parser.add_option("-t", "--token", dest="token", help="your slack token")
+parser.add_option("-s", "--size", dest="min_overlap", help="minimum size of overlap")
 parser.add_option("-o", "--out", dest="outfile", help="name of JSON file to write to")
 
 (options, args) = parser.parse_args()
@@ -24,6 +25,7 @@ for channel in response.body["channels"]:
 
 # print channel_members
 
+min_overlap = int(options.min_overlap)
 names_with_any_overlap = Set()
 overlaps = defaultdict(list)
 for (outer_name, outer_members) in channel_members.items():
@@ -31,16 +33,33 @@ for (outer_name, outer_members) in channel_members.items():
         if outer_name < inner_name:
             overlap = outer_members & inner_members
             overlap_size = len(overlap)
-            if overlap_size > 1:
+            if overlap_size >= min_overlap:
                 names_with_any_overlap.add(outer_name)
                 names_with_any_overlap.add(inner_name)
-                overlaps[overlap_size].append("%s,%s" % (outer_name,inner_name))
+                overlaps[overlap_size].append((outer_name,inner_name))
 
 # print names_with_any_overlap
 # print overlaps
 
 with open(options.outfile, 'w') as outfile:
+    node_number = dict()
+    nodes = list()
+    for name in names_with_any_overlap:
+        node = {'name': name}
+        node_number[name] = len(nodes)
+        nodes.append(node)
+
+    links = list()
+    for (size, pairs) in overlaps.iteritems():
+        for pair in pairs:
+            (source, target) = pair
+            links.append({
+                'source': node_number[source],
+                'target': node_number[target],
+                'value': size
+            })
+
     summary = {
-        'names': list(names_with_any_overlap),
-        'overlaps': overlaps}
+        'nodes': nodes,
+        'links': links}
     json.dump(summary,outfile, sort_keys=True, indent=4, separators=(',', ': '))
