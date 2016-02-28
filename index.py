@@ -19,10 +19,7 @@ channel_members = dict()
 
 for channel in response.body["channels"]:
     name = channel["name"]
-    # print name
     channel_members[name] = set(channel["members"])
-
-# print channel_members
 
 min_overlap = int(options.min_overlap)
 names_with_any_overlap = set()
@@ -38,9 +35,6 @@ for (outer_name, outer_members) in channel_members.items():
                 names_with_any_overlap.add(outer_name)
                 names_with_any_overlap.add(inner_name)
                 overlaps[overlap_size].append((outer_name,inner_name))
-
-# print names_with_any_overlap
-# print overlaps
 
 with open(options.outfile, 'w') as outfile:
     node_number = dict()
