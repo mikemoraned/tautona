@@ -1,7 +1,6 @@
 from slacker import Slacker
 
 from optparse import OptionParser
-from sets import Set
 from collections import defaultdict
 import json
 
@@ -21,12 +20,12 @@ channel_members = dict()
 for channel in response.body["channels"]:
     name = channel["name"]
     # print name
-    channel_members[name] = Set(channel["members"])
+    channel_members[name] = set(channel["members"])
 
 # print channel_members
 
 min_overlap = int(options.min_overlap)
-names_with_any_overlap = Set()
+names_with_any_overlap = set()
 overlaps = defaultdict(list)
 max_overlap = 0
 for (outer_name, outer_members) in channel_members.items():
@@ -52,7 +51,7 @@ with open(options.outfile, 'w') as outfile:
         nodes.append(node)
 
     links = list()
-    for (overlap, pairs) in overlaps.iteritems():
+    for (overlap, pairs) in overlaps.items():
         for pair in pairs:
             (source, target) = pair
             value = int(20 * (float(max_overlap - overlap) / float(max_overlap)))

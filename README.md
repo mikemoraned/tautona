@@ -5,7 +5,7 @@ or people by looking at how they are related on slack.
 
 # Prerequisites
 
-* python, virtualenv, pip
+* python3, virtualenv, pip
 * on mac you also need brew
 * a slack api token (your-api-token below)
 
@@ -21,6 +21,6 @@ or people by looking at how they are related on slack.
 
 # Usage
 
-    python --token your-api-token --size 3 --out summary.json
-    python -m SimpleHTTPServer 8000
+    python3 --token your-api-token --size 20 --out summary.json
+    python3 -m http.server 8000
     open http://localhost:8000
