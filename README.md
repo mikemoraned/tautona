@@ -1,26 +1,26 @@
-Motivation
+# Motivation
 
-  Playing with extracting knowledge from slack metadata. For example, try to find something out about channels
-  or people by looking at how they are related on slack.
+Playing with extracting knowledge from slack metadata. For example, try to find something out about channels
+or people by looking at how they are related on slack.
 
-Prerequisites
+# Prerequisites
 
-  python, virtualenv, pip
-  # on mac you also need brew
-  a slack api token (your-api-token below)
+* python, virtualenv, pip
+* on mac you also need brew
+* a slack api token (your-api-token below)
 
-Install
+# Install
 
-  virtualenv venv
-  source ./venv/bin/activate
+    virtualenv venv
+    source ./venv/bin/activate
 
-  # on mac, you also need:
-  brew install libffi
+    # on mac, you also need:
+    brew install libffi
 
-  pip install -r requirements.txt
+    pip install -r requirements.txt
 
-Usage
+# Usage
 
-  python --token your-api-token --size 3 --out summary.json
-  python -m SimpleHTTPServer 8000
-  # open http://localhost:8000
+    python --token your-api-token --size 3 --out summary.json
+    python -m SimpleHTTPServer 8000
+    open http://localhost:8000
