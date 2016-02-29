@@ -6,7 +6,7 @@ import json
 
 parser = OptionParser()
 parser.add_option("-t", "--token", dest="token", help="your slack token")
-# parser.add_option("-s", "--size", dest="min_overlap", help="minimum size of overlap")
+parser.add_option("-d", "--distance", dest="max_distance", help="maximum distance between nodes (0 .. 1)")
 parser.add_option("-o", "--out", dest="outfile", help="name of JSON file to write to")
 
 (options, args) = parser.parse_args()
@@ -23,6 +23,7 @@ for channel in response.body["channels"]:
 
 names = set()
 distances = defaultdict(list)
+max_distance = float(options.max_distance)
 for (outer_name, outer_members) in channel_members.items():
     for (inner_name, inner_members) in channel_members.items():
         if outer_name < inner_name:
@@ -34,7 +35,7 @@ for (outer_name, outer_members) in channel_members.items():
                     / union_size
                 distance = 1.0 - similarity
 
-                if distance < 0.5:
+                if distance < max_distance:
                     names.add(outer_name)
                     names.add(inner_name)
                     bucket = float("{0:.2f}".format(distance))
