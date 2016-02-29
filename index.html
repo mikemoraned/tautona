@@ -33,7 +33,7 @@ var color = d3.scale.category20();
 
 var force = d3.layout.force()
     .charge(-120)
-    .linkDistance(function(d) { return d.value; })
+    .linkDistance(function(d) { return d.distance; })
     .size([width, height]);
 
 var svg = d3.select("body").append("svg")
@@ -52,7 +52,7 @@ d3.json("summary.json", function(error, graph) {
       .data(graph.links)
     .enter().append("line")
       .attr("class", "link")
-      .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+      .style("stroke-width", function(d) { return Math.sqrt(d.distance); });
 
   var drag = force.drag()
     .on("dragstart", dragstart);
