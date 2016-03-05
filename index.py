@@ -56,7 +56,7 @@ with open(options.outfile, 'w') as outfile:
             links.append({
                 'source': node_number[source],
                 'target': node_number[target],
-                'distance': (distance * 10.0)
+                'distance': distance
             })
 
     summary = {

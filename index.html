@@ -23,8 +23,22 @@
 
 </style>
 <body>
+<div id="controls">
+    <input v-model="distance_filter" type="range" min="0" max="1" step="0.1" />
+</div>
+<div id="sim">
+
+</div>
 <script src="//d3js.org/d3.v3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.17/vue.min.js"></script>
 <script>
+
+    var controls = new Vue({
+      el: '#controls',
+      data: {
+        distance_filter: 0.9
+      }
+    });
 
 var width = 1200,
     height = 900;
@@ -34,26 +48,28 @@ var color = d3.scale.category20();
 var force = d3.layout.force()
     .charge(-120)
     .friction(0.5)
-    .linkDistance(function(d) { return d.distance; })
+    .linkDistance(function(d) { return 10 * d.distance; })
     .size([width, height]);
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("div#sim").append("svg")
     .attr("width", width)
     .attr("height", height);
 
 d3.json("summary.json", function(error, graph) {
   if (error) throw error;
 
+    var links = graph.links.slice(0);
+
   force
       .nodes(graph.nodes)
-      .links(graph.links)
+      .links(links)
       .start();
 
   var link = svg.selectAll(".link")
       .data(graph.links)
     .enter().append("line")
       .attr("class", "link")
-      .style("stroke-width", function(d) { return Math.sqrt(d.distance); });
+      .style("stroke-width", function(d) { return Math.sqrt(10 * d.distance); });
 
   var drag = force.drag()
     .on("dragstart", dragstart);
@@ -82,6 +98,21 @@ d3.json("summary.json", function(error, graph) {
   function dragstart(d) {
     d3.select(this).classed("fixed", d.fixed = true);
   }
+
+    controls.$watch('distance_filter', function(newVal, oldVal){
+        console.log(newVal, " -> ", oldVal);
+
+//        links.slice(0, links.length);
+//        graph.links.forEach(function(link) {
+//           if (link.distance <= newVal) {
+//               links.push(link);
+//           }
+//        });
+
+//        link = link.data(force.links(), function(d) { return d.source.id + "-" + d.target.id; });
+//        link.enter().insert("line", ".node").attr("class", "link");
+//        link.exit().remove();
+    });
 });
 
 </script>
