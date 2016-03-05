@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Similar channels</title>
+</head>
+<body>
+<style>
+
+    .node {
+        stroke: #fff;
+        stroke-width: 1.5px;
+    }
+
+    .link {
+        stroke: #999;
+        stroke-opacity: .6;
+    }
+
+    .node.fixed {
+        fill: #f00;
+    }
+
+</style>
+<body>
+<div id="controls">
+    <input v-model="distance_filter" type="range" min="0" max="1" step="0.05"/>
+</div>
+<div id="sim">
+
+</div>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.17/vue.min.js"></script>
+<script>
+
+    var width = 1200;
+    var height = 900;
+    var radius = 5;
+
+    var controls = new Vue({
+        el: '#controls',
+        data: {
+            distance_filter: 0.9
+        }
+    });
+    controls.$watch('distance_filter', function (newVal, oldVal) {
+        console.log(newVal, " -> ", oldVal);
+    });
+
+    
+
+</script>
+</body>
+</html>
