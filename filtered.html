@@ -34,7 +34,7 @@
 <script>
 
     var width = 1200;
-    var height = 900;
+    var height = 850;
 
     var controls = new Vue({
         el: '#controls',
@@ -57,6 +57,7 @@
 
     function Sim(el, width, height) {
         var radius = 5;
+        var margin = 3 * radius;
         var distanceScale = 10;
 
         var svg = d3.select(el).append("svg")
@@ -99,10 +100,10 @@
                     });
 
             nodeBind.attr("cx", function (d) {
-                        return d.x = Math.max(radius, Math.min(width - radius, d.x));
+                        return d.x = Math.max(margin, Math.min(width - margin, d.x));
                     })
                     .attr("cy", function (d) {
-                        return d.y = Math.max(radius, Math.min(height - radius, d.y));
+                        return d.y = Math.max(margin, Math.min(height - margin, d.y));
                     });
         });
 
