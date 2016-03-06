@@ -24,7 +24,7 @@
 </style>
 <body>
 <div id="controls">
-    <input v-model="distance_filter" type="range" min="0" max="1" step="0.05"/>
+    <input v-model="distance_filter" type="range" min="0" max="1" step="0.01"/>
 </div>
 <div id="sim">
 
@@ -82,8 +82,8 @@
         var nodes = force.nodes();
         var links = force.links();;
 
-        var nodeBind = svg.selectAll(".node");
-        var linkBind = svg.selectAll(".link");
+        var linkBind = svg.append('g').selectAll(".link");
+        var nodeBind = svg.append('g').selectAll(".node");
 
         force.on("tick", function () {
             linkBind.attr("x1", function (d) {
