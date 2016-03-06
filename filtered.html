@@ -76,11 +76,18 @@
         ]
     };
 
+    sim.resetTo(graph.nodes, graph.links);
+
     controls.$watch('distance_filter', function (newVal, oldVal) {
         console.log(newVal, " -> ", oldVal);
+        var filteredLinks = [];
+        graph.links.forEach(function(link){
+            if (link.distance <= newVal) {
+                filteredLinks.push(link);
+            }
+        });
+        sim.resetTo(graph.nodes, filteredLinks);
     });
-
-    sim.resetTo(graph.nodes, graph.links);
 
     function Sim(el, width, height) {
         var radius = 5;
@@ -137,19 +144,6 @@
             newNodes.forEach(function(node){
                 nodes.push(node);
             });
-
-            links.splice(0, links.length);
-            newLinks.forEach(function(link){
-                links.push(link);
-            });
-
-            force.start();
-
-            this.bind();
-        };
-
-        this.resetLinksTo = function(newLinks) {
-            force.stop();
 
             links.splice(0, links.length);
             newLinks.forEach(function(link){
