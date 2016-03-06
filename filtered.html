@@ -71,6 +71,13 @@
             })
             .size([width, height]);
 
+        function dragstart(d) {
+            d3.select(this).classed("fixed", d.fixed = true);
+        }
+
+        var drag = force.drag()
+                .on("dragstart", dragstart);
+
         var nodes = force.nodes();
         var links = force.links();;
 
@@ -98,7 +105,6 @@
                         return d.y = Math.max(radius, Math.min(height - radius, d.y));
                     });
         });
-
 
         function nodeId(d) { return d.name; };
         function linkId(d) { return d.source.name + "-" + d.target.name; }
@@ -134,7 +140,13 @@
             nodeBind
                 .enter().append("circle")
                 .attr("class", "node")
-                .attr("r", radius);
+                .attr("r", radius)
+                .call(drag)
+                .append("title")
+                .text(function (d) {
+                    return d.name;
+                });
+
             nodeBind.exit().remove();
         };
 
