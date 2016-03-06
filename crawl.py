@@ -42,24 +42,8 @@ for (outer_name, outer_members) in channel_members.items():
                     distances[bucket].append((outer_name, inner_name))
 
 with open(options.outfile, 'w') as outfile:
-    node_number = dict()
-    nodes = list()
-    for name in names:
-        node = {'name': name}
-        node_number[name] = len(nodes)
-        nodes.append(node)
-
-    links = list()
-    for (distance, pairs) in distances.items():
-        for pair in pairs:
-            (source, target) = pair
-            links.append({
-                'source': node_number[source],
-                'target': node_number[target],
-                'distance': distance
-            })
-
     summary = {
-        'nodes': nodes,
-        'links': links}
+        'names': list(names),
+        'distances' : distances
+    }
     json.dump(summary,outfile, sort_keys=True, indent=4, separators=(',', ': '))

@@ -154,7 +154,7 @@
         force.start();
     };
 
-    d3.json("summary.json", function (error, graph) {
+    d3.json("vis.json", function (error, graph) {
         sim.resetTo(
                 graph.nodes,
                 filterLinksByMaxDistance(graph.links, controls.distance_filter));
