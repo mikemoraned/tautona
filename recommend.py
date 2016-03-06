@@ -39,15 +39,22 @@ class Recommender():
                 channel_set = frozenset(channel_pair)
                 overlapping_channels = user_channel_set.intersection(channel_set)
                 missing_channels = channel_set.difference(overlapping_channels)
-                if len(missing_channels) > 0:
+                if len(overlapping_channels) > 0 and len(missing_channels) > 0:
                     for missing_channel in missing_channels:
-                        channel_distances[missing_channel].append(float(distance))
+                        channel_distances[missing_channel].append({
+                            "distance": float(distance),
+                            "overlapping": list(overlapping_channels)
+                        })
 
         scored_channels = list()
-        for (channel_name, distances) in channel_distances.items():
-            score = 1.0 - mean(distances)
+        for (channel_name, support) in channel_distances.items():
+            score = 1.0 - mean(map(lambda s: s["distance"], support))
             bucketed_score = float("{0:.2f}".format(score))
-            scored_channels.append({"name": channel_name, "score": bucketed_score})
+            scored_channels.append({
+                "name": channel_name,
+                "score": bucketed_score,
+                "support": support
+            })
 
         return sorted(scored_channels, key=lambda i: i["score"], reverse=True)
 
@@ -57,7 +64,8 @@ with open(options.infile, 'r') as infile:
     recommender = Recommender(summary)
     user = slack.users.info(options.userid)
     user_channels = find_user_channel_names(options.userid)
-    print(user_channels)
     recommended_channels = recommender.recommend_channels(user_channels)
     for recommended_channel in recommended_channels:
-        print(recommended_channel)
+        print("{score:.2f}: {name}, because:".format(**recommended_channel))
+        for support in recommended_channel["support"]:
+            print("\t{overlapping}: distance: {distance}".format(**support))
