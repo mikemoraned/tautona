@@ -8,11 +8,29 @@ from statistics import mean
 parser = OptionParser()
 parser.add_option("-i", "--in", dest="infile", help="the name of the summary JSON file")
 parser.add_option("-t", "--token", dest="token", help="your slack token")
-parser.add_option("-u", "--user", dest="userid", help="userid to produce recommendations for")
+parser.add_option("-u", "--user", dest="username", help="username to produce recommendations for")
 
 (options, args) = parser.parse_args()
 
 slack = Slacker(options.token)
+
+
+class UnknownUsername(Exception):
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return "unknown user: {0}".format(self.name)
+
+
+def find_user_by_name(username):
+    response = slack.users.list()
+
+    for member in response.body["members"]:
+        if member["name"] == username:
+            return member
+
+    raise UnknownUsername(username)
 
 
 def find_user_channel_names(userid):
@@ -62,8 +80,11 @@ class Recommender():
 with open(options.infile, 'r') as infile:
     summary = json.load(infile)
     recommender = Recommender(summary)
-    user = slack.users.info(options.userid)
-    user_channels = find_user_channel_names(options.userid)
+
+    user = find_user_by_name(options.username)
+    user_channels = find_user_channel_names(user["id"])
+
+    print("Recommended channels for {real_name}:".format(**user))
     recommended_channels = recommender.recommend_channels(user_channels)
     for recommended_channel in recommended_channels:
         print("{score:.2f}: {name}, because:".format(**recommended_channel))
