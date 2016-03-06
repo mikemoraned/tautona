@@ -45,37 +45,42 @@
 
     var sim = new Sim("div#sim", width, height);
 
+    var graph = {
+        "nodes" : [
+            {
+                "name": "A"
+            },
+            {
+                "name": "B"
+            },
+            {
+                "name": "C"
+            },
+        ],
+        "links" : [
+            {
+                "distance": 0.70,
+                "source": 0,
+                "target": 1
+            },
+            {
+                "distance": 0.69,
+                "source": 1,
+                "target": 2
+            },
+            {
+                "distance": 0.80,
+                "source": 2,
+                "target": 0
+            }
+        ]
+    };
+
     controls.$watch('distance_filter', function (newVal, oldVal) {
         console.log(newVal, " -> ", oldVal);
     });
 
-    sim.resetTo([
-        {
-            "name": "A"
-        },
-        {
-            "name": "B"
-        },
-        {
-            "name": "C"
-        },
-    ], [
-        {
-            "distance": 0.70,
-            "source": 0,
-            "target": 1
-        },
-        {
-            "distance": 0.69,
-            "source": 1,
-            "target": 2
-        },
-        {
-            "distance": 0.80,
-            "source": 2,
-            "target": 0
-        }
-    ]);
+    sim.resetTo(graph.nodes, graph.links);
 
     function Sim(el, width, height) {
         var radius = 5;
@@ -132,6 +137,19 @@
             newNodes.forEach(function(node){
                 nodes.push(node);
             });
+
+            links.splice(0, links.length);
+            newLinks.forEach(function(link){
+                links.push(link);
+            });
+
+            force.start();
+
+            this.bind();
+        };
+
+        this.resetLinksTo = function(newLinks) {
+            force.stop();
 
             links.splice(0, links.length);
             newLinks.forEach(function(link){
