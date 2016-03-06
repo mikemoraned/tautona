@@ -13,18 +13,22 @@ parser.add_option("-u", "--user", dest="userid", help="userid to produce recomme
 
 slack = Slacker(options.token)
 
-def find_user_channels(userid):
+
+def find_user_channel_names(userid):
     response = slack.channels.list()
 
-    for channel in response.body["channels"]:
-        name = channel["name"]
-        members = channel["members"]
-        if userid in members:
-            yield name
+    def fetch():
+        for channel in response.body["channels"]:
+            name = channel["name"]
+            members = channel["members"]
+            if userid in members:
+                yield name
+
+    return frozenset(fetch())
 
 
 with open(options.infile, 'r') as infile:
     summary = json.load(infile)
     user = slack.users.info(options.userid)
-    user_channels = find_user_channels(options.userid)
-    print(list(user_channels))
+    user_channels = find_user_channel_names(options.userid)
+    print(user_channels)
