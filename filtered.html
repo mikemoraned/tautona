@@ -35,7 +35,6 @@
 
     var width = 1200;
     var height = 900;
-    var radius = 5;
 
     var controls = new Vue({
         el: '#controls',
@@ -43,12 +42,126 @@
             distance_filter: 0.9
         }
     });
+
+    var sim = new Sim("div#sim", width, height);
+
     controls.$watch('distance_filter', function (newVal, oldVal) {
         console.log(newVal, " -> ", oldVal);
     });
 
-    
+    sim.resetTo([
+        {
+            "name": "A"
+        },
+        {
+            "name": "B"
+        },
+        {
+            "name": "C"
+        },
+    ], [
+        {
+            "distance": 0.70,
+            "source": 0,
+            "target": 1
+        },
+        {
+            "distance": 0.69,
+            "source": 1,
+            "target": 2
+        },
+        {
+            "distance": 0.80,
+            "source": 2,
+            "target": 0
+        }
+    ]);
 
+    function Sim(el, width, height) {
+        var radius = 5;
+        var distanceScale = 100;
+
+        var svg = d3.select(el).append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        var force = d3.layout.force()
+            .charge(-120)
+            .friction(0.5)
+            .linkDistance(function (d) {
+                return distanceScale * d.distance;
+            })
+            .size([width, height]);
+
+        var nodes = force.nodes();
+        var links = force.links();;
+
+        var nodeBind = svg.selectAll(".node");
+        var linkBind = svg.selectAll(".link");
+
+        force.on("tick", function () {
+            linkBind.attr("x1", function (d) {
+                        return d.source.x;
+                    })
+                    .attr("y1", function (d) {
+                        return d.source.y;
+                    })
+                    .attr("x2", function (d) {
+                        return d.target.x;
+                    })
+                    .attr("y2", function (d) {
+                        return d.target.y;
+                    });
+
+            nodeBind.attr("cx", function (d) {
+                        return d.x = Math.max(radius, Math.min(width - radius, d.x));
+                    })
+                    .attr("cy", function (d) {
+                        return d.y = Math.max(radius, Math.min(height - radius, d.y));
+                    });
+        });
+
+
+        function nodeId(d) { return d.name; };
+        function linkId(d) { return d.source.name + "-" + d.target.name; }
+
+        this.resetTo = function(newNodes, newLinks) {
+            force.stop();
+
+            nodes.splice(0, nodes.length);
+            newNodes.forEach(function(node){
+                nodes.push(node);
+            });
+
+            links.splice(0, links.length);
+            newLinks.forEach(function(link){
+                links.push(link);
+            });
+
+            force.start();
+
+            this.bind();
+        };
+
+        this.bind = function() {
+            nodeBind = nodeBind.data(force.nodes(), nodeId);
+            nodeBind
+                .enter().append("circle")
+                .attr("class", "node")
+                .attr("r", radius);
+            nodeBind.exit().remove();
+
+            linkBind = linkBind.data(force.links(), linkId);
+            linkBind.enter().append("line")
+                    .attr("class", "link")
+                    .style("stroke-width", function (d) {
+                        return Math.sqrt(distanceScale * d.distance);
+                    });
+            linkBind.exit().remove();
+        };
+
+        force.start();
+    }
 </script>
 </body>
 </html>
