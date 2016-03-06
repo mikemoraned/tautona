@@ -45,55 +45,19 @@
 
     var sim = new Sim("div#sim", width, height);
 
-    var graph = {
-        "nodes" : [
-            {
-                "name": "A"
-            },
-            {
-                "name": "B"
-            },
-            {
-                "name": "C"
-            },
-        ],
-        "links" : [
-            {
-                "distance": 0.70,
-                "source": 0,
-                "target": 1
-            },
-            {
-                "distance": 0.69,
-                "source": 1,
-                "target": 2
-            },
-            {
-                "distance": 0.80,
-                "source": 2,
-                "target": 0
-            }
-        ]
-    };
-
-    function filterLinksByMaxDistance(max) {
+    function filterLinksByMaxDistance(links, max) {
         var filteredLinks = [];
-        graph.links.forEach(function(link){
+        links.forEach(function(link){
             if (link.distance <= max) {
                 filteredLinks.push(link);
             }
         });
-        sim.resetTo(graph.nodes, filteredLinks);
+        return filteredLinks;
     }
-
-    controls.$watch('distance_filter', function (newVal, oldVal) {
-        console.log(newVal, " -> ", oldVal);
-        filterLinksByMaxDistance(newVal);
-    });
 
     function Sim(el, width, height) {
         var radius = 5;
-        var distanceScale = 100;
+        var distanceScale = 10;
 
         var svg = d3.select(el).append("svg")
             .attr("width", width)
@@ -158,13 +122,6 @@
         };
 
         this.bind = function() {
-            nodeBind = nodeBind.data(force.nodes(), nodeId);
-            nodeBind
-                .enter().append("circle")
-                .attr("class", "node")
-                .attr("r", radius);
-            nodeBind.exit().remove();
-
             linkBind = linkBind.data(force.links(), linkId);
             linkBind.enter().append("line")
                     .attr("class", "link")
@@ -172,13 +129,30 @@
                         return Math.sqrt(distanceScale * d.distance);
                     });
             linkBind.exit().remove();
+
+            nodeBind = nodeBind.data(force.nodes(), nodeId);
+            nodeBind
+                .enter().append("circle")
+                .attr("class", "node")
+                .attr("r", radius);
+            nodeBind.exit().remove();
         };
 
         force.start();
     };
 
-    sim.resetTo(graph.nodes, graph.links);
-    filterLinksByMaxDistance(controls.distance_filter);
+    d3.json("summary.json", function (error, graph) {
+        sim.resetTo(
+                graph.nodes,
+                filterLinksByMaxDistance(graph.links, controls.distance_filter));
+
+        controls.$watch('distance_filter', function (newVal, oldVal) {
+            console.log(newVal, " -> ", oldVal);
+            sim.resetTo(
+                graph.nodes,
+                filterLinksByMaxDistance(graph.links, newVal));
+        });
+    });
 </script>
 </body>
 </html>
