@@ -19,10 +19,7 @@ channel_members = dict()
 
 for channel in response.body["channels"]:
     name = channel["name"]
-    if channel["is_archived"]:
-        print("Ignoring %s (archived)" % name)
-    else:
-        channel_members[name] = frozenset(channel["members"])
+    channel_members[name] = frozenset(channel["members"])
 
 names = set()
 distances = defaultdict(list)
