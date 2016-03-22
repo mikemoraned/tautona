@@ -1,7 +1,7 @@
 from slacker import Slacker
 
 from optparse import OptionParser
-from collections import defaultdict
+from itertools import groupby
 import json
 
 parser = OptionParser()
@@ -30,7 +30,17 @@ with open(options.infile, 'r') as infile:
                     'distance': distance
                 })
 
+        links_with_distance_rank = list()
+        def sort_by_source(link):
+            return link["source"]
+        def sort_by_distance(link):
+            return link["distance"]
+        for k, g in groupby(sorted(links, key=sort_by_source), sort_by_source):
+            for rank, link in enumerate(sorted(g,key=sort_by_distance)):
+                link["source_rank"] = rank
+                links_with_distance_rank.append(link)
+
         summary = {
             'nodes': nodes,
-            'links': links}
+            'links': links_with_distance_rank}
         json.dump(summary,outfile, sort_keys=True, indent=4, separators=(',', ': '))

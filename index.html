@@ -67,6 +67,14 @@
         var force = d3.layout.force()
             .charge(-120)
             .friction(0.5)
+            .linkStrength(function (d) {
+                if (d.source_rank === 0) {
+                    return 1.0;
+                }
+                else {
+                    return 0.1;
+                }
+            })
             .linkDistance(function (d) {
                 return distanceScale * d.distance;
             })
