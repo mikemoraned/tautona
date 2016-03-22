@@ -3,3 +3,6 @@ venv
 
 *~
 summary.json
+graph.json
+vis.json
+crawl.json
