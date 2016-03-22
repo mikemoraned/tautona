@@ -68,7 +68,7 @@
             .charge(-120)
             .friction(0.5)
             .linkStrength(function (d) {
-                var bias = 1.0 / Math.pow(2, d.source_rank)
+                var bias = 1.0 / Math.pow(d.source_rank + 1, 2.0)
                 return bias;
             })
             .linkDistance(function (d) {
