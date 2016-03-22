@@ -68,12 +68,8 @@
             .charge(-120)
             .friction(0.5)
             .linkStrength(function (d) {
-                if (d.source_rank === 0) {
-                    return 1.0;
-                }
-                else {
-                    return 0.1;
-                }
+                var bias = 1.0 / Math.pow(2, d.source_rank)
+                return bias;
             })
             .linkDistance(function (d) {
                 return distanceScale * d.distance;
