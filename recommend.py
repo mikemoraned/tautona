@@ -66,13 +66,14 @@ class Recommender():
 
         scored_channels = list()
         for (channel_name, support) in channel_distances.items():
-            score = 1.0 - mean(map(lambda s: s["distance"], support))
-            bucketed_score = float("{0:.2f}".format(score))
-            scored_channels.append({
-                "name": channel_name,
-                "score": bucketed_score,
-                "support": support
-            })
+            if len(support) > 1:
+                score = 1.0 - mean(map(lambda s: s["distance"], support))
+                bucketed_score = float("{0:.2f}".format(score))
+                scored_channels.append({
+                    "name": channel_name,
+                    "score": bucketed_score,
+                    "support": support
+                })
 
         return sorted(scored_channels, key=lambda i: i["score"], reverse=True)
 
