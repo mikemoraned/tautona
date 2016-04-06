@@ -6,7 +6,7 @@ or people by looking at how they are related on slack.
 # Prerequisites
 
 * python3, virtualenv, pip
-* a slack api token (your-api-token below)
+* a slack api token (API_TOKEN below)
 
 # Install
 
@@ -17,9 +17,15 @@ or people by looking at how they are related on slack.
 
 # Usage
 
+## Setup defaults
+
+    export API_TOKEN="your-api-token"
+
 ## Get base information
 
-    python3 crawl.py --token your-api-token --distance 0.7 --out crawl.json
+Only include those channels written to in last 3 months, and with a Jaccard distance of 0.7 or less
+
+    TS=$(date -v-3m +%s) python3 crawl.py --token $API_TOKEN --distance 0.7 --recency $TS --out crawl.json
 
 ## Visualise channel similarity
 
@@ -31,4 +37,4 @@ or people by looking at how they are related on slack.
 
     Assuming some user-name:
 
-    python3 recommend.py --token your-api-token --in crawl.json --user user-name
+    python3 recommend.py --token $API_TOKEN --in crawl.json --user user-name

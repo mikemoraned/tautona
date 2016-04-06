@@ -6,3 +6,4 @@ summary.json
 graph.json
 vis.json
 crawl.json
+__pycache__
