@@ -7,6 +7,7 @@ or people by looking at how they are related on slack.
 
 * python3, virtualenv, pip
 * a slack api token (API_TOKEN below)
+    * see https://api.slack.com/bot-users, specifically https://my.slack.com/services/new/bot
 
 # Install
 
