@@ -13,7 +13,6 @@
     }
 
     .link {
-        stroke: #999;
         stroke-opacity: .6;
     }
 
@@ -138,7 +137,12 @@
                     .attr("class", "link")
                     .style("stroke-width", function (d) {
                         return Math.sqrt(distanceScale * d.distance);
-                    });
+                    })
+                    .transition()
+                    .style("stroke", "#555")
+                    .duration(5000)
+                    .style("stroke", "#999")
+            ;
             linkBind.exit().remove();
 
             nodeBind = nodeBind.data(force.nodes(), nodeId);
