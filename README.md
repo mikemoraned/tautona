@@ -14,7 +14,7 @@ or people by looking at how they are related on slack.
     virtualenv venv
     source ./venv/bin/activate
 
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
 
 # Usage
 
@@ -26,12 +26,12 @@ or people by looking at how they are related on slack.
 
 Only include those channels written to in last 3 months, and with a Jaccard distance of 0.7 or less
 
-    TS=$(date -v-3m +%s) python3 crawl.py --token $API_TOKEN --distance 0.7 --recency $TS --out crawl.json
+    python3 crawl.py --token $API_TOKEN --distance 0.7 --recency $(date -v-3m +%s) --out crawl.json
 
 ## Visualise channel similarity
 
     python3 visualise.py --in crawl.json --out vis.json
-    python3 -m http.server 8000
+    python3 -m http.server 8000 &
     open http://localhost:8000
     
 ## Recommend channels
