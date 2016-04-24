@@ -7,3 +7,6 @@ graph.json
 vis.json
 crawl.json
 __pycache__
+*.mm
+*.mm.index
+
