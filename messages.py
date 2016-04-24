@@ -41,7 +41,7 @@ def remove_single_occurrences(texts):
 
 channel_to_text_id = {}
 
-channel_limit = 10
+channel_limit = 1000
 for channel in response.body["channels"]:
     name = channel["name"]
     if channel["is_archived"]:
