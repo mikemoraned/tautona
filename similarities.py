@@ -27,14 +27,19 @@ print(text_id_to_channel)
 dictionary = corpora.Dictionary.load('dictionary.dict')
 corpus = corpora.MmCorpus('corpus.mm')
 
-lsi = models.LsiModel(corpus, id2word=dictionary, num_topics=100)
-index = similarities.MatrixSimilarity(lsi[corpus])
+lsi = models.LsiModel(corpus, id2word=dictionary, num_topics=400)
+lsi.print_topics(20)
+lda = models.ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=400, update_every=1, chunksize=100, passes=1)
+lda.print_topics(20)
+
+model = lsi
+index = similarities.MatrixSimilarity(model[corpus])
 
 names = set()
 distances = defaultdict(list)
 max_distance = float(options.max_distance)
 for (channel_name, channel_text_id) in channel_to_text_id.items():
-    channel_as_query = lsi[corpus[channel_text_id]]
+    channel_as_query = model[corpus[channel_text_id]]
     sims = sorted(enumerate(index[channel_as_query]), key=lambda item: -item[1])
     for sim in sims:
         channel_sim_name = text_id_to_channel[sim[0]]
@@ -43,7 +48,7 @@ for (channel_name, channel_text_id) in channel_to_text_id.items():
             distance = 1.0 - ((channel_sim_cosine_distance + 1.0) / 2.0)
             if distance < max_distance:
                 bucket = float("{0:.2f}".format(distance))
-                print("{0} -> {1}: {2}".format(channel_name, channel_sim_name, bucket))
+                # print("{0} -> {1}: {2}".format(channel_name, channel_sim_name, bucket))
                 names.add(channel_name)
                 names.add(channel_sim_name)
                 distances[bucket].append((channel_name, channel_sim_name))
