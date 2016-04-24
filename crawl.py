@@ -36,6 +36,7 @@ for channel in response.body["channels"]:
             if newest_ts < recency_limit:
                 print("Ignoring %s (not written to recently)" % name)
             else:
+                print("Adding %s" % name)
                 channel_members[name] = frozenset(channel["members"])
 
 names = set()
