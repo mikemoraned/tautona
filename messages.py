@@ -2,6 +2,10 @@ from optparse import OptionParser
 from slacker import Slacker
 from gensim import corpora
 from collections import defaultdict
+import logging
+import json
+
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 parser = OptionParser()
 parser.add_option("-t", "--token", dest="token", help="your slack token")
@@ -35,6 +39,8 @@ def remove_single_occurrences(texts):
              for text in texts]
     return texts
 
+channel_to_text_id = {}
+
 channel_limit = 10
 for channel in response.body["channels"]:
     name = channel["name"]
@@ -48,6 +54,8 @@ for channel in response.body["channels"]:
 
         if len(text_messages) > 0:
             print("Found {0} messages in {1}".format(len(text_messages), name))
+            text_id = len(texts)
+            channel_to_text_id[name] = text_id
             texts.append(messages_to_text(text_messages))
             if len(texts) >= channel_limit:
                 break
@@ -59,6 +67,10 @@ texts = remove_single_occurrences(texts)
 dictionary = corpora.Dictionary(texts)
 
 corpus = [dictionary.doc2bow(text) for text in texts]
+
+with open('channel_text_id.json', 'w') as outfile:
+    json.dump(channel_to_text_id, outfile, sort_keys=True, indent=4, separators=(',', ': '))
+dictionary.save('dictionary.dict')
 corpora.MmCorpus.serialize('corpus.mm', corpus)
 
 print(dictionary)
