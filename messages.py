@@ -1,6 +1,7 @@
 from optparse import OptionParser
 from slacker import Slacker
 from gensim import corpora
+from gensim.models import tfidfmodel
 from collections import defaultdict
 import logging
 import json
@@ -69,10 +70,12 @@ texts = remove_single_occurrences(texts)
 dictionary = corpora.Dictionary(texts)
 
 corpus = [dictionary.doc2bow(text) for text in texts]
+tfidf_model = tfidfmodel.TfidfModel(corpus, normalize=True)
+tfidf_corpus = tfidf_model[corpus]
 
 with open('channel_text_id.json', 'w') as outfile:
     json.dump(channel_to_text_id, outfile, sort_keys=True, indent=4, separators=(',', ': '))
 dictionary.save('dictionary.dict')
-corpora.MmCorpus.serialize('corpus.mm', corpus)
+corpora.MmCorpus.serialize('tfidf_corpus.mm', tfidf_corpus)
 
 print(dictionary)
