@@ -5,6 +5,7 @@ from gensim.models import tfidfmodel
 from collections import defaultdict
 import logging
 import json
+import re
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -21,12 +22,13 @@ channel_members = dict()
 
 texts = []
 
+special = re.compile("<.+?>")
 stoplist = set('for a of the and to in'.split())
 def messages_to_text(messages):
     text = list()
     for m in messages:
         for word in m["text"].lower().split():
-            if word not in stoplist:
+            if word not in stoplist and not special.match(word):
                 text.append(word)
     return text
 
