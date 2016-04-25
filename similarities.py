@@ -29,8 +29,6 @@ corpus = corpora.MmCorpus('corpus.mm')
 
 lsi = models.LsiModel(corpus, id2word=dictionary, num_topics=400)
 lsi.print_topics(20)
-lda = models.ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=400, update_every=1, chunksize=100, passes=1)
-lda.print_topics(20)
 
 model = lsi
 index = similarities.MatrixSimilarity(model[corpus])
@@ -45,7 +43,7 @@ for (channel_name, channel_text_id) in channel_to_text_id.items():
         channel_sim_name = text_id_to_channel[sim[0]]
         if channel_sim_name < channel_name: # assume distance is symmetric
             channel_sim_cosine_distance = sim[1]
-            distance = 1.0 - ((channel_sim_cosine_distance + 1.0) / 2.0)
+            distance = 1.0 - channel_sim_cosine_distance # assume cosine distance always > 0
             if distance < max_distance:
                 bucket = float("{0:.2f}".format(distance))
                 # print("{0} -> {1}: {2}".format(channel_name, channel_sim_name, bucket))
