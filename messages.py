@@ -41,6 +41,8 @@ def remove_single_occurrences(texts):
 
 channel_to_text_id = {}
 
+min_messages = 100
+max_messages = 1000
 channel_limit = 1000
 for channel in response.body["channels"]:
     name = channel["name"]
@@ -48,11 +50,11 @@ for channel in response.body["channels"]:
         print("Ignoring %s (archived)" % name)
     else:
         id = channel["id"]
-        history = slack.channels.history(id)
+        history = slack.channels.history(id, count=max_messages)
         newest = messages = history.body["messages"]
         text_messages = [m for m in messages if m["type"] == "message" and "subtype" not in m]
 
-        if len(text_messages) > 0:
+        if len(text_messages) >= min_messages:
             print("Found {0} messages in {1}".format(len(text_messages), name))
             text_id = len(texts)
             channel_to_text_id[name] = text_id
@@ -60,7 +62,7 @@ for channel in response.body["channels"]:
             if len(texts) >= channel_limit:
                 break
         else:
-            print("Ignoring %s (no text messages)" % name)
+            print("Ignoring {0} (not enough text messages, {1})".format(name, len(text_messages)))
 
 texts = remove_single_occurrences(texts)
 
