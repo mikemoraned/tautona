@@ -25,7 +25,7 @@ print(channel_to_text_id)
 print(text_id_to_channel)
 
 dictionary = corpora.Dictionary.load('dictionary.dict')
-corpus = corpora.MmCorpus('tfidf_corpus.mm')
+corpus = corpora.MmCorpus('corpus.mm')
 
 lsi = models.LsiModel(corpus, id2word=dictionary, num_topics=400)
 lsi.print_topics(20)
