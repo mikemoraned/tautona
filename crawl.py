@@ -61,6 +61,6 @@ for (outer_name, outer_members) in channel_members.items():
 with open(options.outfile, 'w') as outfile:
     summary = {
         'names': list(names),
-        'distances' : distances
+        'distances': distances
     }
-    json.dump(summary,outfile, sort_keys=True, indent=4, separators=(',', ': '))
+    json.dump(summary, outfile, sort_keys=True, indent=4, separators=(',', ': '))
