@@ -24,10 +24,15 @@ based on content.
 
 ## Get base information
 
-Find and index all messages, for any channels that have between 10 and 1000
+Find all messages, for any channels that have between 10 and 1000
 recent messages
 
-    python3 messages.py --token $API_TOKEN
+    python3 crawl.py --token $API_TOKEN
+
+Analyse these messages, extracting what we need for building anything
+with them
+
+    python3 analyse.py
 
 ## Convert to similarities
 

@@ -4,6 +4,8 @@ from optparse import OptionParser
 import logging
 import json
 
+from channeltotextmapping import ChannelToTextMapping
+
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 parser = OptionParser()
@@ -12,17 +14,7 @@ parser.add_option("-o", "--out", dest="outfile", help="name of JSON file to writ
 
 (options, args) = parser.parse_args()
 
-channel_to_text_id = {}
-text_id_to_channel = []
-with open('channel_text_id.json', 'r') as infile:
-    channel_to_text_id = json.load(infile)
-    for (channel, text_id) in channel_to_text_id.items():
-        text_id_to_channel.append("")
-    for (channel,text_id) in channel_to_text_id.items():
-        text_id_to_channel[text_id] = channel
-
-print(channel_to_text_id)
-print(text_id_to_channel)
+mapping = ChannelToTextMapping.load("channel_text_id.json")
 
 dictionary = corpora.Dictionary.load('dictionary.dict')
 corpus = corpora.MmCorpus('corpus.mm')
@@ -36,11 +28,11 @@ index = similarities.MatrixSimilarity(model[corpus])
 names = set()
 distances = defaultdict(list)
 max_distance = float(options.max_distance)
-for (channel_name, channel_text_id) in channel_to_text_id.items():
+for (channel_name, channel_text_id) in mapping.items():
     channel_as_query = model[corpus[channel_text_id]]
     sims = sorted(enumerate(index[channel_as_query]), key=lambda item: -item[1])
     for sim in sims:
-        channel_sim_name = text_id_to_channel[sim[0]]
+        channel_sim_name = mapping.channel_name_for_id(sim[0])
         if channel_sim_name < channel_name: # assume distance is symmetric
             channel_sim_cosine_distance = sim[1]
             distance = 1.0 - channel_sim_cosine_distance # assume cosine distance always > 0
