@@ -13,3 +13,6 @@ __pycache__
 dictionary.dict
 channel_text_id.json
 content.sims.json
+texts.txt
+channel_texts.txt
+tmp
