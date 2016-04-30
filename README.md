@@ -1,7 +1,7 @@
 # Motivation
 
-Playing with extracting knowledge from slack metadata. For example, try to find something out about channels
-or people by looking at how they are related on slack.
+Playing with extracting knowledge from slack data or metadata. For example, try to find similar channels,
+based on content.
 
 # Prerequisites
 
@@ -24,13 +24,22 @@ or people by looking at how they are related on slack.
 
 ## Get base information
 
-Only include those channels written to in last 3 months, and with a Jaccard distance of 0.7 or less
+Find and index all messages, for any channels that have between 10 and 1000
+recent messages
 
-    python3 crawl.py --token $API_TOKEN --distance 0.7 --recency $(date -v-3m +%s) --out crawl.json
+    python3 messages.py --token $API_TOKEN
+
+## Convert to similarities
+
+Use analysed message content to find similarities between channels, and
+convert this similarity to a distance measure, only allowing channels closer
+than 0.8.
+
+    python3 similarities.py --distance 0.8 --out content.sims.json
 
 ## Visualise channel similarity
 
-    python3 visualise.py --in crawl.json --out vis.json
+    python3 visualise.py --in content.sims.json --out vis.json
     python3 -m http.server 8000 &
     open http://localhost:8000
     
