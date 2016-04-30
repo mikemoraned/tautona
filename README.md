@@ -42,9 +42,3 @@ than 0.8.
     python3 visualise.py --in content.sims.json --out vis.json
     python3 -m http.server 8000 &
     open http://localhost:8000
-    
-## Recommend channels
-
-    Assuming some user-name:
-
-    python3 recommend.py --token $API_TOKEN --in crawl.json --user user-name
