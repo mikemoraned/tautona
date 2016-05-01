@@ -19,7 +19,7 @@ mapping = ChannelToTextMapping.load("channel_text_id.json")
 dictionary = corpora.Dictionary.load('dictionary.dict')
 corpus = corpora.MmCorpus('corpus.mm')
 
-lsi = models.LsiModel(corpus, id2word=dictionary, num_topics=400)
+lsi = models.LsiModel.load("model_lsi")
 lsi.print_topics(20)
 
 model = lsi
