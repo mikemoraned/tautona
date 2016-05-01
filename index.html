@@ -25,7 +25,7 @@
 <div id="controls">
     <input v-model="manual_distance_filter" type="range" min="0" max="1" step="0.005"/>
     <input v-model="cycle" type="checkbox"/> Auto-cycle
-    <span>{{ ticker }}, {{ distance_filter }}</span>
+    <span>{{ (cycle_position / 1000).toFixed(0) }}, {{ distance_filter.toFixed(3) }}</span>
 </div>
 <div id="sim">
 
@@ -43,7 +43,8 @@
             manual_distance_filter: 0.01,
             cycle: false,
             cycling: false,
-            cycle_length: 30 * 1000,
+            cycle_position: 0,
+            cycle_length: 40 * 1000,
             ticker: Date.now()
         },
         computed: {
@@ -66,7 +67,8 @@
                         window.requestAnimationFrame(update);
                     }
 
-                    var offset = (this.ticker % this.cycle_length) / this.cycle_length;
+                    this.cycle_position = this.ticker % this.cycle_length;
+                    var offset = (this.cycle_position) / this.cycle_length;
                     return (this.manual_distance_filter + offset) % 1.0;
                 } else {
 
