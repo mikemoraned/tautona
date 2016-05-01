@@ -16,3 +16,4 @@ content.sims.json
 texts.txt
 channel_texts.txt
 tmp
+model_*

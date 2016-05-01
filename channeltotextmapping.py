@@ -19,6 +19,9 @@ class ChannelToTextMapping():
     def channel_name_for_id(self, id):
         return self.text_id_to_channel[id]
 
+    def text_id_for_name(self, name):
+        return self.channel_to_text_id[name]
+
     def save(self, outfile_name):
         with open(outfile_name, 'w') as outfile:
             json.dump(self.channel_to_text_id, outfile, sort_keys=True, indent=4, separators=(',', ': '))
