@@ -25,7 +25,7 @@
 <div id="controls">
     <input v-model="manual_distance_filter" type="range" min="0" max="1" step="0.005"/>
     <input v-model="manual_distance_filter" type="text"/>
-    <input v-model="cycle" type="checkbox"/> Auto-cycle <input v-model="cycling" type="checkbox"/>
+    <input v-model="cycle" type="checkbox"/> Auto-cycle
     <input v-model="distance_filter" type="text"/>
     <input v-model="ticker" type="text"/>
 </div>
@@ -44,32 +44,36 @@
         data: {
             manual_distance_filter: 0.01,
             cycle: false,
+            cycling: false,
             cycle_length: 30 * 1000,
             ticker: Date.now()
         },
         computed: {
             distance_filter: function() {
                 if (this.cycle) {
+                    if (!this.cycling) {
+                        var self = this;
+
+                        var update = function () {
+                            self.$data.ticker = Date.now();
+                            if (self.$data.cycle) {
+                                window.requestAnimationFrame(update);
+                            }
+                            else {
+                                self.$data.cycling = false;
+                            }
+                        };
+
+                        this.cycling = true;
+                        window.requestAnimationFrame(update);
+                    }
+
                     var offset = (this.ticker % this.cycle_length) / this.cycle_length;
                     return (this.manual_distance_filter + offset) % 1.0;
-                } else{
+                } else {
+
                     return this.manual_distance_filter;
                 }
-            },
-            cycling: function () {
-                if (this.cycle) {
-                    var self = this;
-
-                    var update = function () {
-                        self.$data.ticker = Date.now();
-                        if (self.$data.cycle) {
-                            window.requestAnimationFrame(update);
-                        }
-                    };
-
-                    window.requestAnimationFrame(update);
-                }
-                return this.cycle;
             }
         }
     });
