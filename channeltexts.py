@@ -3,17 +3,30 @@ import re
 from channeltotextmapping import ChannelToTextMapping
 
 
+class AlreadySeenChannel(Exception):
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return "Already seen channel " + self.name
+
+
 class ChannelTexts():
     SPECIAL = re.compile("<.+?>")
     STOPLIST = set('for a of the and to in'.split())
 
-    def __init__(self, channel_to_text_mapping = ChannelToTextMapping(), texts = []):
+    def __init__(self, channel_to_text_mapping=None, texts=None):
+        if channel_to_text_mapping is None:
+            channel_to_text_mapping = ChannelToTextMapping()
         self.channel_to_text_mapping = channel_to_text_mapping
+
+        if texts is None:
+            texts = []
         self.texts = texts
 
     def add_messages_for_channel(self, name, text_messages):
         if self.channel_to_text_mapping.contains_channel(name):
-            raise "Already seen channel " + name
+            raise AlreadySeenChannel(name)
 
         self.channel_to_text_mapping.increment_channels(name)
 
@@ -26,7 +39,7 @@ class ChannelTexts():
         text = list()
         for m in messages:
             for word in m["text"].lower().split():
-                if word not in self.STOPLIST and not self.SPECIAL.match(word):
+                if word not in self.STOPLIST and not self.SPECIAL.match(word) and len(word) >= 4:
                     text.append(word)
         return text
 
