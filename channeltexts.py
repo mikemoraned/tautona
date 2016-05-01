@@ -39,7 +39,7 @@ class ChannelTexts():
         text = list()
         for m in messages:
             for word in m["text"].lower().split():
-                if word not in self.STOPLIST and not self.SPECIAL.match(word):
+                if word not in self.STOPLIST and not self.SPECIAL.match(word) and len(word) >= 4:
                     text.append(word)
         return text
 
