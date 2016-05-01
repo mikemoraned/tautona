@@ -26,8 +26,7 @@
     <input v-model="manual_distance_filter" type="range" min="0" max="1" step="0.005"/>
     <input v-model="manual_distance_filter" type="text"/>
     <input v-model="cycle" type="checkbox"/> Auto-cycle
-    <input v-model="distance_filter" type="text"/>
-    <input v-model="ticker" type="text"/>
+    <span>{{ ticker }}, {{ distance_filter }}</span>
 </div>
 <div id="sim">
 
