@@ -34,7 +34,13 @@ with them
 
     python3 analyse.py
 
-## Convert to similarities
+## Find similar channels
+
+For a single channel, find top 10 similar channels
+
+    python3 similarity.py --channel some-channel-name --topn 10
+
+## Bulk Convert to channel similarities
 
 Use analysed message content to find similarities between channels, and
 convert this similarity to a distance measure, only allowing channels closer
