@@ -1,8 +1,14 @@
 import json
 
+
 class ChannelToTextMapping():
-    def __init__(self, channel_to_text_id = {}, text_id_to_channel = {}):
+    def __init__(self, channel_to_text_id=None, text_id_to_channel=None):
+        if channel_to_text_id is None:
+            channel_to_text_id = {}
         self.channel_to_text_id = channel_to_text_id
+
+        if text_id_to_channel is None:
+            text_id_to_channel = {}
         self.text_id_to_channel = text_id_to_channel
 
     def contains_channel(self, name):
