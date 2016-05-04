@@ -50,6 +50,6 @@ than 0.8.
 
 ## Visualise channel similarity
 
-    python3 visualise.py --in content.sims.json --out vis.json
-    python3 -m http.server 8000 &
+    python3 visualise.py --in content.sims.json --out vis/vis.json
+    cd vis && python3 -m http.server 8000 &
     open http://localhost:8000
