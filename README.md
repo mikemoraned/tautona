@@ -50,6 +50,7 @@ than 0.8.
 
 ## Visualise channel similarity
 
+    git submodule add https://github.com/mikemoraned/similarity-vis.git vis
     python3 visualise.py --in content.sims.json --out vis/vis.json
     cd vis && python3 -m http.server 8000 &
     open http://localhost:8000
