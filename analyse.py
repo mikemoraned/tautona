@@ -36,7 +36,7 @@ corpus = [dictionary.doc2bow(text) for text in texts]
 tfidf_model = tfidfmodel.TfidfModel(corpus, normalize=True)
 tfidf_corpus = tfidf_model[corpus]
 
-lsi = models.LsiModel(corpus, id2word=dictionary, num_topics=400)
+lsi = models.LsiModel(tfidf_corpus, id2word=dictionary, num_topics=400)
 lsi.print_topics(20)
 
 model = lsi
