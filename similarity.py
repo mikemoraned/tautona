@@ -3,34 +3,29 @@ from gensim import corpora, models, similarities
 from optparse import OptionParser
 
 from channeltotextmapping import ChannelToTextMapping
+from analyse import Analysed
 
 
 class Similarity():
 
-    def __init__(self, channel_mapping, dictionary, corpus, model, index):
+    def __init__(self, channel_mapping, analysed, index):
         self.channel_mapping = channel_mapping
-        self.corpus = corpus
-        self.dictionary = dictionary
+        self.analysed = analysed
         self.index = index
-        self.model = model
 
     @classmethod
     def load(cls):
         mapping = ChannelToTextMapping.load("channel_text_id.json")
 
-        dictionary = corpora.Dictionary.load('dictionary.dict')
-        corpus = corpora.MmCorpus('corpus.mm')
+        analysed = Analysed.load()
 
-        model = models.LsiModel.load("model_lsi")
-        model.print_topics(20)
+        index = similarities.MatrixSimilarity(analysed.model[analysed.corpus])
 
-        index = similarities.MatrixSimilarity(model[corpus])
-
-        return Similarity(mapping, dictionary, corpus, model, index)
+        return Similarity(mapping, analysed, index)
 
     def find_similar_channels_for_channel(self, channel_name):
         channel_text_id = self.channel_mapping.text_id_for_name(channel_name)
-        channel_as_query = self.model[self.corpus[channel_text_id]]
+        channel_as_query = self.analysed.model[self.analysed.corpus[channel_text_id]]
 
         sims = sorted(enumerate(self.index[channel_as_query]), key=lambda item: -item[1])
 

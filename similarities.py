@@ -5,6 +5,7 @@ import logging
 import json
 
 from channeltotextmapping import ChannelToTextMapping
+from analyse import Analysed
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -16,20 +17,15 @@ parser.add_option("-o", "--out", dest="outfile", help="name of JSON file to writ
 
 mapping = ChannelToTextMapping.load("channel_text_id.json")
 
-dictionary = corpora.Dictionary.load('dictionary.dict')
-corpus = corpora.MmCorpus('corpus.mm')
+analysed = Analysed.load()
 
-lsi = models.LsiModel.load("model_lsi")
-lsi.print_topics(20)
-
-model = lsi
-index = similarities.MatrixSimilarity(model[corpus])
+index = similarities.MatrixSimilarity(analysed.model[analysed.corpus])
 
 names = set()
 distances = defaultdict(list)
 max_distance = float(options.max_distance)
 for (channel_name, channel_text_id) in mapping.items():
-    channel_as_query = model[corpus[channel_text_id]]
+    channel_as_query = analysed.model[analysed.corpus[channel_text_id]]
     sims = sorted(enumerate(index[channel_as_query]), key=lambda item: -item[1])
     for sim in sims:
         channel_sim_name = mapping.channel_name_for_id(sim[0])
