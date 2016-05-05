@@ -24,16 +24,16 @@ class Analysed():
         self.corpus = corpus
         self.model = model
 
-    def save(self):
-        self.dictionary.save('dictionary.dict')
-        corpora.MmCorpus.serialize('corpus.mm', self.corpus)
-        self.model.save("model_lsi")
+    def save(self, dir):
+        self.dictionary.save(dir + '/dictionary.dict')
+        corpora.MmCorpus.serialize(dir + '/corpus.mm', self.corpus)
+        self.model.save(dir + "/model_lsi")
 
     @classmethod
-    def load(cls):
-        dictionary = corpora.Dictionary.load('dictionary.dict')
-        corpus = corpora.MmCorpus('corpus.mm')
-        lsi_model = models.LsiModel.load("model_lsi")
+    def load(cls, dir):
+        dictionary = corpora.Dictionary.load(dir + '/dictionary.dict')
+        corpus = corpora.MmCorpus(dir + '/corpus.mm')
+        lsi_model = models.LsiModel.load(dir + "/model_lsi")
 
         print(dictionary)
         print(corpus)
@@ -66,4 +66,4 @@ if __name__ == '__main__':
     channel_texts = ChannelTexts.load("channel_text_id.json", "channel_texts.txt")
     texts = remove_single_occurrences(channel_texts.texts_only())
 
-    Analyser().analyse(texts).save()
+    Analyser().analyse(texts).save("analysis")

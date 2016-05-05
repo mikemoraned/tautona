@@ -17,7 +17,7 @@ parser.add_option("-o", "--out", dest="outfile", help="name of JSON file to writ
 
 mapping = ChannelToTextMapping.load("channel_text_id.json")
 
-analysed = Analysed.load()
+analysed = Analysed.load("analysis")
 
 index = similarities.MatrixSimilarity(analysed.model[analysed.corpus])
 

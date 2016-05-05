@@ -17,7 +17,7 @@ class Similarity():
     def load(cls):
         mapping = ChannelToTextMapping.load("channel_text_id.json")
 
-        analysed = Analysed.load()
+        analysed = Analysed.load("analysis")
 
         index = similarities.MatrixSimilarity(analysed.model[analysed.corpus])
 
