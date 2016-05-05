@@ -15,7 +15,7 @@ class Similarity():
 
     @classmethod
     def load(cls):
-        mapping = ChannelToTextMapping.load("channel_text_id.json")
+        mapping = ChannelToTextMapping.load("text/channel_text_id.json")
 
         analysed = Analysed.load("analysis")
 

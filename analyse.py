@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
     (options, args) = parser.parse_args()
 
-    channel_texts = ChannelTexts.load("channel_text_id.json", "channel_texts.txt")
+    channel_texts = ChannelTexts.load("text/channel_text_id.json", "text/channel_texts.txt")
     texts = remove_single_occurrences(channel_texts.texts_only())
 
     Analyser().analyse(texts).save("analysis")

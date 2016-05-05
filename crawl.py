@@ -41,4 +41,4 @@ for channel in response.body["channels"][:channel_limit]:
         else:
             print("Ignoring {0} (not enough text messages, {1})".format(name, len(text_messages)))
 
-texts.save("channel_text_id.json", "channel_texts.txt")
+texts.save("text/channel_text_id.json", "text/channel_texts.txt")
