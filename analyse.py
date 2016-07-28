@@ -1,21 +1,6 @@
-import logging
 from collections import defaultdict
 from gensim import corpora, models
 from gensim.models import tfidfmodel
-from optparse import OptionParser
-
-from channeltexts import ChannelTexts
-
-
-def remove_single_occurrences(texts):
-    frequency = defaultdict(int)
-    for text in texts:
-        for token in text:
-            frequency[token] += 1
-
-    texts = [[token for token in text if frequency[token] > 1]
-             for text in texts]
-    return texts
 
 
 class Analysed():
@@ -24,16 +9,16 @@ class Analysed():
         self.corpus = corpus
         self.model = model
 
-    def save(self):
-        self.dictionary.save('dictionary.dict')
-        corpora.MmCorpus.serialize('corpus.mm', self.corpus)
-        self.model.save("model_lsi")
+    def save(self,dir):
+        self.dictionary.save(dir + '/dictionary.dict')
+        corpora.MmCorpus.serialize(dir + '/corpus.mm', self.corpus)
+        self.model.save(dir + '/model_lsi')
 
     @classmethod
-    def load(cls):
-        dictionary = corpora.Dictionary.load('dictionary.dict')
-        corpus = corpora.MmCorpus('corpus.mm')
-        lsi_model = models.LsiModel.load("model_lsi")
+    def load(cls, dir):
+        dictionary = corpora.Dictionary.load(dir + '/dictionary.dict')
+        corpus = corpora.MmCorpus(dir + '/corpus.mm')
+        lsi_model = models.LsiModel.load(dir + '/model_lsi')
 
         print(dictionary)
         print(corpus)
@@ -44,9 +29,11 @@ class Analysed():
 
 class Analyser():
     def analyse(self, texts):
-        dictionary = corpora.Dictionary(texts)
+        reduced_texts = self.remove_single_occurrences(texts)
 
-        corpus = [dictionary.doc2bow(text) for text in texts]
+        dictionary = corpora.Dictionary(reduced_texts)
+
+        corpus = [dictionary.doc2bow(text) for text in reduced_texts]
 
         tfidf_model = tfidfmodel.TfidfModel(corpus, normalize=True)
         tfidf_corpus = tfidf_model[corpus]
@@ -55,15 +42,13 @@ class Analyser():
 
         return Analysed(dictionary, tfidf_corpus, lsi_model)
 
+    def remove_single_occurrences(self, texts):
+        frequency = defaultdict(int)
+        for text in texts:
+            for token in text:
+                frequency[token] += 1
 
-if __name__ == '__main__':
-    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+        texts = [[token for token in text if frequency[token] > 1]
+                 for text in texts]
+        return texts
 
-    parser = OptionParser()
-
-    (options, args) = parser.parse_args()
-
-    channel_texts = ChannelTexts.load("channel_text_id.json", "channel_texts.txt")
-    texts = remove_single_occurrences(channel_texts.texts_only())
-
-    Analyser().analyse(texts).save()

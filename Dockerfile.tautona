@@ -1,0 +1,4 @@
+FROM tautona-base
+ENV SLACK_API_TOKEN ""
+CMD [ "python", "./tautona.py" ]
+

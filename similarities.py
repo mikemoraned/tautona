@@ -15,7 +15,7 @@ parser.add_option("-o", "--out", dest="outfile", help="name of JSON file to writ
 
 (options, args) = parser.parse_args()
 
-mapping = ChannelToTextMapping.load("channel_text_id.json")
+mapping = ChannelToTextMapping.load("text/channel_text_id.json")
 
 analysed = Analysed.load()
 

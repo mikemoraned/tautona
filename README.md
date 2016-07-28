@@ -20,14 +20,14 @@ based on content.
 
 ## Setup defaults
 
-    export API_TOKEN="your-api-token"
+    export SLACK__API_TOKEN="your-api-token"
 
 ## Get base information
 
 Find all messages, for any channels that have between 10 and 1000
 recent messages
 
-    python3 crawl.py --token $API_TOKEN
+    python3 crawl.py --token $SLACK__API_TOKEN
 
 Analyse these messages, extracting what we need for building anything
 with them

@@ -14,10 +14,10 @@ class Similarity():
         self.index = index
 
     @classmethod
-    def load(cls):
+    def load(cls, dir):
         mapping = ChannelToTextMapping.load("channel_text_id.json")
 
-        analysed = Analysed.load()
+        analysed = Analysed.load(dir)
 
         index = similarities.MatrixSimilarity(analysed.model[analysed.corpus])
 
