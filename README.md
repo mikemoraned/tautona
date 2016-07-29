@@ -65,3 +65,19 @@ Display visualisation (after this step, you rerun generation step and just reloa
 
     cd vis && python3 -m http.server 8000 &
     open http://localhost:8000
+
+If you'd like to share the visualisation, you can just share the contents of the vis/ directory.
+
+If you want to share, but don't want to give away your channel names then try
+
+    python3 visualise.py --in content.sims.json --out vis/vis.json --obfuscate
+    
+This will replace parts of channel names with a consistent, but arbitrary, replacement
+e.g. "my-channel-name" becomes "mazut-duller-toffy".
+
+By default this will look for random replacement words in /usr/share/dict/words, but you can point it to any
+file you like
+
+    python3 visualise.py --in content.sims.json --out vis/vis.json --obfuscate --words-file your-words-file
+
+
