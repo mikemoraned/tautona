@@ -22,13 +22,18 @@ class NameRemapper():
         self.random_boolean = random_boolean
         self.replacement_word_source = replacement_word_source
 
-    @staticmethod
-    def from_words_file(words_file):
+    @classmethod
+    def normalise(cls, word):
+        return word.lower().rstrip()
+
+    @classmethod
+    def from_words_file(cls, words_file):
         word_selection = []
         with open(words_file, 'r') as words:
-            for word in words:
-                if 3 < len(word) < 5:
-                    word_selection.append(word)
+            for word in words.readlines():
+                normalised = cls.normalise(word)
+                if 3 < len(normalised) < 5:
+                    word_selection.append(normalised)
         return NameRemapper(random_boolean=builtin_random_boolean, replacement_word_source=word_selection)
 
     def for_names(self, names):
