@@ -31,6 +31,14 @@ class RemapperForNames():
         return set(re.split('\W+', name))
 
 
+class NotEnoughReplacementWordsInSource(Exception):
+    def __init__(self, needed, actual):
+        self.actual = actual
+        self.needed = needed
+
+    def __str__(self):
+        return "needed: {}, actual: {}".format(self.needed, self.actual)
+
 def builtin_random_boolean():
     return random.random() < 0.5
 
@@ -50,7 +58,7 @@ class NameRemapper():
         with open(words_file, 'r') as words:
             for word in words.readlines():
                 normalised = cls.normalise(word)
-                if 3 < len(normalised) < 5:
+                if 5 <= len(normalised) <= 6:
                     word_selection.append(normalised)
         return NameRemapper(random_boolean=builtin_random_boolean, replacement_word_source=word_selection)
 
@@ -64,6 +72,9 @@ class NameRemapper():
         for replacement in self.replacement_word_source:
             if len(replacements) < amount_required and self.random_boolean:
                 replacements.append(replacement)
+
+        if len(replacements) < amount_required:
+            raise NotEnoughReplacementWordsInSource(amount_required, len(replacements))
 
         replacements = sorted(replacements)
         names = sorted(names)

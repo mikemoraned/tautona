@@ -6,11 +6,12 @@ from nameremapper import NameRemapper
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--in", dest="infile", help="the name of the summary JSON file")
 parser.add_argument("-o", "--out", dest="outfile", help="name of JSON file to write to")
-parser.add_argument("-a", "--anonymize", dest="anonymize", default=False, help="anonymize the channel names")
-parser.add_argument("-w", "--words-file", dest="system_words_file", default="/usr/share/dict/words",
+parser.add_argument("-a", "--anonymize", dest="anonymize", action='store_true', help="anonymize the channel names")
+parser.add_argument("-w", "--words-file", dest="words_file", default="/usr/share/dict/words",
                     help="file with words for anonymization")
 
 args = parser.parse_args()
+print("{} -> {}; anonymize={}, words_file={}".format(args.infile, args.outfile, args.anonymize, args.words_file))
 
 
 def passthrough(arg):
@@ -26,8 +27,8 @@ with open(args.infile, 'r') as infile:
         nodes = list()
 
         if args.anonymize:
-            remapper = NameRemapper\
-                .from_words_file(args.system_words_file)\
+            remapper = NameRemapper \
+                .from_words_file(args.words_file) \
                 .for_names(summary["names"])
             remap_names = remapper.remap_names
 
