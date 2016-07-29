@@ -39,13 +39,14 @@ class NotEnoughReplacementWordsInSource(Exception):
     def __str__(self):
         return "needed: {}, actual: {}".format(self.needed, self.actual)
 
-def builtin_random_boolean():
-    return random.random() < 0.5
+
+def builtin_sample(population, sample_size):
+    return random.sample(population, sample_size)
 
 
 class NameRemapper():
-    def __init__(self, random_boolean, replacement_word_source):
-        self.random_boolean = random_boolean
+    def __init__(self, sample_fn, replacement_word_source):
+        self.sample_fn = sample_fn
         self.replacement_word_source = replacement_word_source
 
     @classmethod
@@ -60,18 +61,20 @@ class NameRemapper():
                 normalised = cls.normalise(word)
                 if 5 <= len(normalised) <= 6:
                     word_selection.append(normalised)
-        return NameRemapper(random_boolean=builtin_random_boolean, replacement_word_source=word_selection)
+        return NameRemapper(sample_fn=builtin_sample, replacement_word_source=word_selection)
 
     def for_names(self, names):
         replacements = self.select_random(RemapperForNames.words_in_names(names))
         return RemapperForNames(replacements)
 
     def select_random(self, names):
-        replacements = []
+        # replacements = []
         amount_required = len(names)
-        for replacement in self.replacement_word_source:
-            if len(replacements) < amount_required and self.random_boolean:
-                replacements.append(replacement)
+        # for replacement in self.replacement_word_source:
+        #     if len(replacements) < amount_required and self.random_boolean:
+        #         replacements.append(replacement)
+
+        replacements = self.sample_fn(self.replacement_word_source, amount_required)
 
         if len(replacements) < amount_required:
             raise NotEnoughReplacementWordsInSource(amount_required, len(replacements))

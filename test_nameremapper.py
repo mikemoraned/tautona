@@ -4,12 +4,12 @@ import unittest
 
 class NameRemapperTest(unittest.TestCase):
     @staticmethod
-    def always_true():
-        return True
+    def always_same(population, sample_size):
+        return population[:sample_size]
 
     def test_remaps_single_word(self):
         replacements = ["melba", "peach"]
-        remapper = NameRemapper(random_boolean=NameRemapperTest.always_true, replacement_word_source=replacements)
+        remapper = NameRemapper(sample_fn=NameRemapperTest.always_same, replacement_word_source=replacements)
         input_names = ["mary"]
         remapper_for_names = remapper.for_names(input_names)
 
@@ -22,7 +22,7 @@ class NameRemapperTest(unittest.TestCase):
             ["melba", "peach",   "strawberry", "vanilla"]
         input_names = \
             ["double-barrelled", "foop",       "mary"]
-        remapper = NameRemapper(random_boolean=NameRemapperTest.always_true, replacement_word_source=presorted_replacements)
+        remapper = NameRemapper(sample_fn=NameRemapperTest.always_same, replacement_word_source=presorted_replacements)
 
         remapper_for_names = remapper.for_names(input_names)
 
@@ -35,7 +35,7 @@ class NameRemapperTest(unittest.TestCase):
             ["melba", "peach",   "strawberry", "vanilla"]
         input_names = \
             ["double-barrelled", "double-ended", "ended-up"]
-        remapper = NameRemapper(random_boolean=NameRemapperTest.always_true, replacement_word_source=presorted_replacements)
+        remapper = NameRemapper(sample_fn=NameRemapperTest.always_same, replacement_word_source=presorted_replacements)
 
         remapper_for_names = remapper.for_names(input_names)
 
