@@ -1,4 +1,5 @@
 import random
+import re
 
 
 class RemapperForNames():
@@ -6,11 +7,28 @@ class RemapperForNames():
         self.replacements = replacements
 
     def remap_name(self, name):
-        return self.replacements[name]
+        remapped = []
+        for part in re.split('(\W+)', name):
+            if part in self.replacements:
+                remapped.append(self.replacements[part])
+            else:
+                remapped.append(part)
+        return "".join(remapped)
 
     def remap_names(self, names):
         for name in names:
             yield self.remap_name(name)
+
+    @classmethod
+    def words_in_names(cls, names):
+        unique_words = set()
+        for name in names:
+            unique_words |= cls.words_in_name(name)
+        return list(unique_words)
+
+    @classmethod
+    def words_in_name(cls, name):
+        return set(re.split('\W+', name))
 
 
 def builtin_random_boolean():
@@ -37,14 +55,19 @@ class NameRemapper():
         return NameRemapper(random_boolean=builtin_random_boolean, replacement_word_source=word_selection)
 
     def for_names(self, names):
-        replacements = self.select_random(names)
+        replacements = self.select_random(RemapperForNames.words_in_names(names))
         return RemapperForNames(replacements)
 
     def select_random(self, names):
         replacements = []
+        amount_required = len(names)
         for replacement in self.replacement_word_source:
-            if len(replacements) < len(names) and self.random_boolean:
+            if len(replacements) < amount_required and self.random_boolean:
                 replacements.append(replacement)
+
+        replacements = sorted(replacements)
+        names = sorted(names)
+
         replacement_map = {}
         for (name, replacement) in zip(names, replacements):
             replacement_map[name] = replacement
