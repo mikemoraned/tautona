@@ -1,5 +1,6 @@
 import random
 
+
 class RemapperForNames():
     def __init__(self, replacements):
         self.replacements = replacements
@@ -11,8 +12,10 @@ class RemapperForNames():
         for name in names:
             yield self.remap_name(name)
 
+
 def builtin_random_boolean():
     return random.random() < 0.5
+
 
 class NameRemapper():
     def __init__(self, random_boolean, replacement_word_source):
@@ -20,7 +23,7 @@ class NameRemapper():
         self.replacement_word_source = replacement_word_source
 
     @staticmethod
-    def from_system_words(words_file):
+    def from_words_file(words_file):
         word_selection = []
         with open(words_file, 'r') as words:
             for word in words:

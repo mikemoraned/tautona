@@ -1,4 +1,4 @@
-from nameanonymiser import NameRemapper
+from nameremapper import NameRemapper
 import unittest
 
 

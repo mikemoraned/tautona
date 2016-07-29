@@ -1,7 +1,7 @@
 import argparse
 import json
 from itertools import groupby
-from nameanonymiser import NameRemapper
+from nameremapper import NameRemapper
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--in", dest="infile", help="the name of the summary JSON file")
@@ -27,7 +27,7 @@ with open(args.infile, 'r') as infile:
 
         if args.anonymize:
             remapper = NameRemapper\
-                .from_system_words(args.system_words_file)\
+                .from_words_file(args.system_words_file)\
                 .for_names(summary["names"])
             remap_names = remapper.remap_names
 
