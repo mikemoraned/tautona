@@ -68,11 +68,7 @@ class NameRemapper():
         return RemapperForNames(replacements)
 
     def select_random(self, names):
-        # replacements = []
         amount_required = len(names)
-        # for replacement in self.replacement_word_source:
-        #     if len(replacements) < amount_required and self.random_boolean:
-        #         replacements.append(replacement)
 
         replacements = self.sample_fn(self.replacement_word_source, amount_required)
 
