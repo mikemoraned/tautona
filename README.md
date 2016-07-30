@@ -68,6 +68,8 @@ Display visualisation (after this step, you rerun generation step and just reloa
     cd vis && python3 -m http.server 8000 &
     open http://localhost:8000
 
+## Sharing channel similarity visualisation
+
 If you'd like to share the visualisation, you can just share the contents of the vis/ directory.
 
 If you want to share, but don't want to give away your channel names then try
