@@ -18,7 +18,7 @@ def remove_single_occurrences(texts):
     return texts
 
 
-class Analysed():
+class Analysed:
     def __init__(self, dictionary, corpus, model):
         self.dictionary = dictionary
         self.corpus = corpus
@@ -42,7 +42,10 @@ class Analysed():
         return Analysed(dictionary, corpus, lsi_model)
 
 
-class Analyser():
+class Analyser:
+    def __init__(self):
+        pass
+
     def analyse(self, texts):
         dictionary = corpora.Dictionary(texts)
 
@@ -51,19 +54,23 @@ class Analyser():
         tfidf_model = tfidfmodel.TfidfModel(corpus, normalize=True)
         tfidf_corpus = tfidf_model[corpus]
 
-        lsi_model = models.LsiModel(tfidf_corpus, id2word=dictionary, num_topics=400)
+        lsi_model = models.LsiModel(tfidf_corpus,
+                                    id2word=dictionary, num_topics=400)
 
         return Analysed(dictionary, tfidf_corpus, lsi_model)
 
 
 if __name__ == '__main__':
-    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
+                        level=logging.INFO)
 
     parser = OptionParser()
 
     (options, args) = parser.parse_args()
 
-    channel_texts = ChannelTexts.load("channel_text_id.json", "channel_texts.txt")
-    texts = remove_single_occurrences(channel_texts.texts_only())
+    channel_texts = ChannelTexts.load("channel_text_id.json",
+                                      "channel_texts.txt")
 
-    Analyser().analyse(texts).save()
+    Analyser()\
+        .analyse(remove_single_occurrences(channel_texts.texts_only()))\
+        .save()

@@ -30,7 +30,8 @@ class ChannelToTextMapping():
 
     def save(self, outfile_name):
         with open(outfile_name, 'w') as outfile:
-            json.dump(self.channel_to_text_id, outfile, sort_keys=True, indent=4, separators=(',', ': '))
+            json.dump(self.channel_to_text_id, outfile,
+                      sort_keys=True, indent=4, separators=(',', ': '))
 
     @classmethod
     def load(cls, infile_name):

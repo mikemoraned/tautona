@@ -39,7 +39,9 @@ class ChannelTexts():
         text = list()
         for m in messages:
             for word in m["text"].lower().split():
-                if word not in self.STOPLIST and not self.SPECIAL.match(word) and len(word) >= 4:
+                if word not in self.STOPLIST \
+                        and not self.SPECIAL.match(word) \
+                        and len(word) >= 4:
                     text.append(word)
         return text
 
@@ -52,7 +54,8 @@ class ChannelTexts():
 
     @classmethod
     def load(cls, mapping_infile_name, texts_infile_name):
-        channel_to_text_mapping = ChannelToTextMapping.load(mapping_infile_name)
+        channel_to_text_mapping = \
+            ChannelToTextMapping.load(mapping_infile_name)
         texts = []
         with open(texts_infile_name, 'r') as texts_infile:
             for line in texts_infile.readlines():
