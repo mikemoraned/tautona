@@ -61,19 +61,23 @@ class NameRemapper():
                 normalised = cls.normalise(word)
                 if 5 <= len(normalised) <= 6:
                     word_selection.append(normalised)
-        return NameRemapper(sample_fn=builtin_sample, replacement_word_source=word_selection)
+        return NameRemapper(sample_fn=builtin_sample,
+                            replacement_word_source=word_selection)
 
     def for_names(self, names):
-        replacements = self.select_random(RemapperForNames.words_in_names(names))
+        words = RemapperForNames.words_in_names(names)
+        replacements = self.select_random(words)
         return RemapperForNames(replacements)
 
     def select_random(self, names):
         amount_required = len(names)
 
-        replacements = self.sample_fn(self.replacement_word_source, amount_required)
+        replacements = self.sample_fn(self.replacement_word_source,
+                                      amount_required)
 
         if len(replacements) < amount_required:
-            raise NotEnoughReplacementWordsInSource(amount_required, len(replacements))
+            raise NotEnoughReplacementWordsInSource(amount_required,
+                                                    len(replacements))
 
         replacements = sorted(replacements)
         names = sorted(names)
