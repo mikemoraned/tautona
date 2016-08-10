@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Similarity</title>
+</head>
+<body>
+<style>
+
+    .node {
+        stroke: #fff;
+        stroke-width: 1.5px;
+    }
+
+    .link {
+        stroke-opacity: .6;
+    }
+
+    .node.fixed {
+        fill: #f00;
+    }
+
+</style>
+<body>
+<div id="controls">
+    <input v-model="manual_distance_filter" type="range" min="0" max="1" step="0.005"/>
+    <input v-model="cycle" type="checkbox"/> Auto-cycle
+    <span>{{ (cycle_position / 1000).toFixed(0) }}, {{ distance_filter.toFixed(3) }}</span>
+</div>
+<div id="sim">
+
+</div>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.17/vue.min.js"></script>
+<script>
+
+    var width = 800;
+    var height = 800;
+
+    var controls = new Vue({
+        el: '#controls',
+        data: {
+            manual_distance_filter: 0.01,
+            cycle: false,
+            cycling: false,
+            cycle_position: 0,
+            cycle_length: 40 * 1000,
+            ticker: Date.now()
+        },
+        computed: {
+            distance_filter: function() {
+                if (this.cycle) {
+                    if (!this.cycling) {
+                        var self = this;
+
+                        var update = function () {
+                            self.$data.ticker = Date.now();
+                            if (self.$data.cycle) {
+                                window.requestAnimationFrame(update);
+                            }
+                            else {
+                                self.$data.cycling = false;
+                            }
+                        };
+
+                        this.cycling = true;
+                        window.requestAnimationFrame(update);
+                    }
+
+                    this.cycle_position = this.ticker % this.cycle_length;
+                    var offset = (this.cycle_position) / this.cycle_length;
+                    return (this.manual_distance_filter + offset) % 1.0;
+                } else {
+
+                    return this.manual_distance_filter;
+                }
+            }
+        }
+    });
+
+    var sim = new Sim("div#sim", width, height);
+
+    function filterLinksByMaxDistance(links, max) {
+        var filteredLinks = [];
+        links.forEach(function(link){
+            if (link.distance <= max) {
+                filteredLinks.push(link);
+            }
+        });
+        return filteredLinks;
+    }
+
+    function Sim(el, width, height) {
+        var radius = 4;
+        var margin = 3 * radius;
+        var distanceScale = 10;
+
+        var svg = d3.select(el).append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        var force = d3.layout.force()
+            .charge(-120)
+            .friction(0.5)
+            .linkStrength(function (d) {
+                var bias = 1.0 / Math.pow(d.source_rank + 1, 2.0)
+                return bias;
+            })
+            .linkDistance(function (d) {
+                return distanceScale * d.distance;
+            })
+            .size([width, height]);
+
+        function dragstart(d) {
+            d3.select(this).classed("fixed", d.fixed = true);
+        }
+
+        var drag = force.drag()
+                .on("dragstart", dragstart);
+
+        var nodes = force.nodes();
+        var links = force.links();;
+
+        var linkBind = svg.append('g').selectAll(".link");
+        var nodeBind = svg.append('g').selectAll(".node");
+
+        force.on("tick", function () {
+            linkBind.attr("x1", function (d) {
+                        return d.source.x;
+                    })
+                    .attr("y1", function (d) {
+                        return d.source.y;
+                    })
+                    .attr("x2", function (d) {
+                        return d.target.x;
+                    })
+                    .attr("y2", function (d) {
+                        return d.target.y;
+                    });
+
+            nodeBind.attr("cx", function (d) {
+                        return d.x = Math.max(margin, Math.min(width - margin, d.x));
+                    })
+                    .attr("cy", function (d) {
+                        return d.y = Math.max(margin, Math.min(height - margin, d.y));
+                    });
+        });
+
+        function nodeId(d) { return d.name; };
+        function linkId(d) { return d.source.name + "-" + d.target.name; }
+
+        this.resetTo = function(newNodes, newLinks) {
+            force.stop();
+
+            nodes.splice(0, nodes.length);
+            newNodes.forEach(function(node){
+                nodes.push(node);
+            });
+
+            links.splice(0, links.length);
+            newLinks.forEach(function(link){
+                links.push(link);
+            });
+
+            force.start();
+
+            this.bind();
+        };
+
+        this.bind = function() {
+            linkBind = linkBind.data(force.links(), linkId);
+            linkBind.enter().append("line")
+                    .attr("class", "link")
+                    .style("stroke-width", function (d) {
+                        return Math.sqrt(distanceScale * d.distance);
+                    })
+                    .transition()
+                    .style("stroke", "#555")
+                    .duration(5000)
+                    .style("stroke", "#999")
+            ;
+            linkBind.exit().remove();
+
+            nodeBind = nodeBind.data(force.nodes(), nodeId);
+            nodeBind
+                .enter().append("circle")
+                .attr("class", "node")
+                .attr("r", radius)
+                .call(drag)
+                .append("title")
+                .text(function (d) {
+                    return d.name;
+                });
+
+            nodeBind.exit().remove();
+        };
+
+        force.start();
+    };
+
+    d3.json("vis.json", function (error, graph) {
+        sim.resetTo(
+                graph.nodes,
+                filterLinksByMaxDistance(graph.links, controls.distance_filter));
+
+        controls.$watch('distance_filter', function (newVal, oldVal) {
+            console.log(newVal, " -> ", oldVal);
+            sim.resetTo(
+                graph.nodes,
+                filterLinksByMaxDistance(graph.links, newVal));
+        });
+    });
+</script>
+</body>
+</html>
