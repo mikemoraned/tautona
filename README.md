@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/mikemoraned/tautona.svg?branch=master)](https://travis-ci.org/mikemoraned/tautona)
 
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/URINAa2NOTQ/0.jpg)](https://www.youtube.com/watch?v=URINAa2NOTQ)
+
 # Motivation
 
 Playing with extracting knowledge from slack data or metadata. For example, try to find similar channels,
